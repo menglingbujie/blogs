@@ -1,0 +1,30 @@
+{
+  "list":[
+    {
+      "title": "我的文章",
+      "path":"article",
+      "children":[
+        {
+          "title": "技术",
+          "path":"tech",
+          "children":[
+            "20181101"
+          ]
+        },
+        {
+          "title": "生活",
+          "path":"life",
+          "children": []
+        }
+      ]
+    },
+    {
+      "url": "https://github.com/menglingbujie/jsTools",
+      "title": "我的工具"
+    },
+    {
+      "url": "../villiage/index.html",
+      "title": "我的家乡"
+    }
+  ]
+}
