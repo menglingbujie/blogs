@@ -5,178 +5,85 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- <title>梦令布孑个人主页</title> -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="./styles/bootstrap.min.css" type="text/css" rel="stylesheet" />
   <link href="./styles/common.css" type="text/css" rel="stylesheet" />
-  <style>
-    
-    .container>.wrap{
-      max-width:1200px;
-      min-width:960px;
-      margin:0 auto;
-      height:100%;
-      overflow:hidden;
-    }
-    .container>.wrap>.main,.container>.wrap>.slidebar{
-      box-shadow:0 0 10px 0 rgba(0,0,0,.8);
-    }
-    
-    .container>.wrap>.slidebar{
-      /* margin-left:4.1667%;
-      width:29.1667%; */
-      /* margin-right:1%; */
-      width:16%;
-      margin:10px 1% 0 0;
-      min-height:500px;
-      /* text-align: right; */
-      border-radius: 4px;
-      padding:10px;
-    }
-    .container>.wrap>.slidebar>.list{
+  <link href="./styles/index.css" type="text/css" rel="stylesheet" />
 
-    }
-    .container>.wrap>.slidebar>.list>li{
-
-    }
-    .container>.wrap>.slidebar>.list>li>.title{
-
-    }
-    .container>.wrap>.slidebar>.list>li>.dropdown{
-
-    }
-    .container>.wrap>.slidebar>.list>li>.dropdown>li{
-
-    }
-    .container>.wrap>.slidebar>.list>li>.dropdown>li>.subtitle{
-
-    }
-    .container>.wrap>.slidebar>.list>li>.dropdown>li>.routers{
-
-    }
-    .container>.wrap>.slidebar>.list>li>.dropdown>li>.routers>.route{
-      cursor: pointer;
-    }
-    .container>.wrap>.slidebar.right{
-      float:right;
-    }
-
-    .container>.wrap>.main{
-      /* width:66.6667%; */
-      width:80%;
-      margin:10px 2% 0 1%;
-      height:calc(98% - 10px);
-    }
-    .container>.wrap>.main>.title,
-    .container>.wrap>.main>.content{
-      padding:0 10px;
-    }
-    .container>.wrap>.main>.title{
-      height:60px;line-height:60px;
-      box-sizing: content-box;
-      border:1px solid #ddd;
-      font-size:20px;
-      font-style: italic;
-    }
-    .container>.wrap>.main>.content{
-      /* height:inherit; */
-      height: calc(100% - 60px);
-    }
-    .container>.wrap>.main>.content>iframe{
-      /* border:10px solid blue; */
-    }
-  </style>
   <script src="./libs/jquery-3.3.1.min.js" type="text/javascript"></script>
   <script src="./libs/lodash.core.min.js" type="text/javascript"></script>
 </head>
 <body>
   <div class="container">
     <div class="wrap">
-      <div class="slidebar right">
-        <ul class="list" id="sliderBarId"></ul>
-      </div>
       <div class="main">
-        <div class="title" id="pathId"></div>
+        <div class="searchbar">
+          <input placeholder="如：技术，生活，工具" />
+          <button class="btn btn-primary">搜索</button>
+        </div>
         <div class="content">
-          <iframe src="" id="ifrContentId"></iframe>
+          <ul class="panels" id="panelsId">
+            <li class="panel" v-for="(val,key) in articleList" :key="key">
+              <div class="title">
+                <span>{{val.title}}</span>
+                <a href="#" class="more">更多</a>
+              </div>
+              <ul class="articles">
+                <li class="item" v-for="item in val.list" :key="item.url">
+                  <a href="{{item.url}}">{{item.title+"=="}}</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </div>
-      
     </div>
   </div>
-
+  <script src="./libs/bootstrap.min.js" type="text/javascript"></script>
+  <script src="./libs/vue.js" type="text/javascript"></script>
+  <script src="./libs/vuex.js" type="text/javascript"></script>
+  <script>
+    Vue.use(Vuex);
+  </script>
+  <script src="./js/api/home.js" type="text/javascript"></script>
+  <script src="./js/home.js" type="text/javascript"></script>
   <script>
     (function(win,doc){
-      function SliderBar() {
-        this.initSlider = function () {
-          var html_slider = "";
-          var sliderItemTpl = "<li><span class='title'>{TITLE}</span><ul class='dropdown'>{DROPDOWN}</ul></li>";
-          $.getJSON("./json/silderbar.json", function (resp) {
-            var slidetData = resp.list;
-            _.forEach(slidetData, function (data, k) {
-              var titleTpl = "<span>" + data.title + "</span>";
-              if (data.url) {
-                titleTpl = "<a href='" + data.url + "'>" + data.title + "</a>";
-              }
+      // function Home (url){
+      //   this.pathToUrl = function(path){
+      //     var pathArr = path.split("-");
+      //     var url = "../json/data/";
+      //     _.forEach(pathArr, function (v, k) {
+      //       url += v + "/";
+      //     })
+      //     return url.replace(/\/$/, ".json");
+      //   }
+      //   this.initEvents = function () {
+      //     var that = this;
+      //     $(".route").on("click", function (evt) {
+      //       var path = $(this).attr("path");
+      //       var url = this.pathToUrl(path);
+      //       that.fetchList(url);
+      //     })
+      //   }
+      //   this.init = function(){
+      //     var firstRoute = $(".route:first-child");
+      //     var path = firstRoute.attr("path");
+      //     var pathname = firstRoute.attr("pathname");
+      //     $("#pathId").html(pathname);
+      //     var url = this.pathToUrl(path);
+      //     $("#ifrContentId").attr("src","./article/list.html?url="+url);
+      //   }
+      // }
+      // var sliderbar = new SliderBar();
+      // sliderbar.init();
 
-              if (data.children && data.children.length > 0) {
-                var dropdownTpl = "";
-                _.forEach(data.children, function (child, k) {
-                  dropdownTpl += "<li><span class='subtitle'>" + child.title + "</span><ul class='routers'>{FINAL_ITEM}</ul></li>";
-
-                  if (child.children && child.children.length > 0) {
-                    _.forEach(child.children, function (final, k) {
-                      var finalItemTpl = "<li class='route' pathname='"+data.title+'/'+child.title+'/'+ final+"' path='" + data.path + '-' + child.path + '-' + final + "'>" + final + "</li>";
-                      dropdownTpl = dropdownTpl.replace(/{FINAL_ITEM}/, finalItemTpl);
-                    })
-                  } else {
-                    dropdownTpl = dropdownTpl.replace(/{FINAL_ITEM}/, '');
-                  }
-                })
-              }
-              html_slider += sliderItemTpl.replace(/{TITLE}/, titleTpl).replace(/{DROPDOWN}/, dropdownTpl || "");
-            })
-            $("#sliderBarId").html(html_slider)
-          })
-        }
-        this.init = function () {
-          this.initSlider();
-        }
-      }
-      function Home (url){
-
-        this.pathToUrl = function(path){
-          var pathArr = path.split("-");
-          var url = "../json/data/";
-          _.forEach(pathArr, function (v, k) {
-            url += v + "/";
-          })
-          return url.replace(/\/$/, ".json");
-        }
-        this.initEvents = function () {
-          var that = this;
-          $(".route").on("click", function (evt) {
-            var path = $(this).attr("path");
-            var url = this.pathToUrl(path);
-            that.fetchList(url);
-          })
-        }
-        this.init = function(){
-          var firstRoute = $(".route:first-child");
-          var path = firstRoute.attr("path");
-          var pathname = firstRoute.attr("pathname");
-          $("#pathId").html(pathname);
-          var url = this.pathToUrl(path);
-          $("#ifrContentId").attr("src","./article/list.html?url="+url);
-        }
-      }
-      var sliderbar = new SliderBar();
-      sliderbar.init();
-
-      var home = new Home();
-      win.home = home;
+      // var home = new Home();
+      // win.home = home;
     })(window,document);
 
     $(function(){
-      home.init();
-      home.initEvents();
+      // home.init();
+      // home.initEvents();
     })
     
   </script>
